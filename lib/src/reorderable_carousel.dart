@@ -3,12 +3,31 @@ import 'package:flutter/material.dart';
 
 /// A carousel that can be re-ordered by dragging the elements around.
 class ReorderableCarousel extends StatefulWidget {
+  /// The number of items in the carousel.
   final int numItems;
+
+  /// Callback for when the user presses the "+" button. The given index
+  /// indicates where the new item should be inserted at.
   final void Function(int index) addItemAt;
-  final Widget Function(double boxSize, int index, bool isSelected) itemBuilder;
+
+  /// Builder for creating the items of the carousel.
+  /// [itemWidth] indicates the maximum amount of width alloted for the item
+  ///
+  /// [index] is the index of the item to be built
+  ///
+  /// [isSelected] whether or not the item is selected. This will be true if the
+  ///   item has been tapped on, or if it's currently being dragged
+  final Widget Function(double itemWidth, int index, bool isSelected)
+      itemBuilder;
+
+  /// Called after the items have been reordered. Both [oldIndex] and [newIndex]
+  /// will be > 0 and < numItems
   final void Function(int oldIndex, int newIndex) onReorder;
+
+  /// Called whenever a new item is selected.
   final void Function(int selectedIndex) onItemSelected;
 
+  /// Creates a new [ReorderableCarousel]
   ReorderableCarousel({
     @required this.numItems,
     @required this.addItemAt,
@@ -41,7 +60,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
+      builder: (context, constraints) {
         boxSize = constraints.maxWidth / 3;
 
         var children = [
@@ -67,7 +86,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
           // We want all the pages to be cached. This also
           // alleviates a problem where scrolling would get broken if
           // a page changed a position by more than ~4.
-          cacheExtent: (boxSize + iconSize) * 10,
+          cacheExtent: (boxSize + iconSize) * widget.numItems,
           controller: _controller,
           scrollDirection: Axis.horizontal,
           onReorder: (oldIndex, newIndex) {
@@ -102,8 +121,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                 Listener(
                   behavior: HitTestBehavior.opaque,
                   onPointerDown: (event) {
-                    final SliverReorderableListState list =
-                        SliverReorderableList.maybeOf(context);
+                    final list = SliverReorderableList.maybeOf(context);
 
                     list?.startItemDragReorder(
                       index: i,
@@ -132,29 +150,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                 ),
 
                 // no plus icons for the invisible boxes
-                if (i != 0 && i != children.length - 1)
-                  // once we have 10 items, don't allow anymore items to be built
-                  if (widget.numItems < 10)
-                    AnimatedOpacity(
-                      opacity: _dragInProgress ? 0.0 : 1.0,
-                      duration: const Duration(milliseconds: 250),
-                      child: IconButton(
-                        visualDensity: VisualDensity.compact,
-                        icon: Icon(Icons.add),
-                        onPressed: () {
-                          widget.addItemAt(i);
-                          setState(() {
-                            _updateSelectedIndex(i);
-
-                            _scrollToBox(i - 1);
-                          });
-                        },
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      width: iconSize,
-                    ),
+                if (i != 0 && i != children.length - 1) _buildAddItemIcon(i),
               ],
             );
           },
@@ -189,6 +185,32 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
     );
   }
 
+  Widget _buildAddItemIcon(int index) {
+    // once we have 10 items, don't allow anymore items to be built
+    if (widget.numItems < 10) {
+      return AnimatedOpacity(
+        opacity: _dragInProgress ? 0.0 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        child: IconButton(
+          visualDensity: VisualDensity.compact,
+          icon: Icon(Icons.add),
+          onPressed: () {
+            widget.addItemAt(index);
+            setState(() {
+              _updateSelectedIndex(index);
+
+              _scrollToBox(index - 1);
+            });
+          },
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: iconSize,
+      );
+    }
+  }
+
   void _updateSelectedIndex(int index) {
     widget.onItemSelected(index);
     setState(() {
@@ -197,13 +219,10 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   }
 
   void _scrollToBox(int index) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      // _controller.jumpTo(0);
-      _controller.animateTo(
-          (((index) * (boxSize + iconSize)) + boxSize + iconSize),
-          duration: Duration(milliseconds: 350),
-          curve: Curves.linear);
-    });
+    _controller.animateTo(
+        (((index) * (boxSize + iconSize)) + boxSize + iconSize),
+        duration: Duration(milliseconds: 350),
+        curve: Curves.linear);
   }
 }
 
