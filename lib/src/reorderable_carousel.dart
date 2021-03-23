@@ -33,7 +33,7 @@ class ReorderableCarousel extends StatefulWidget {
     @required this.addItemAt,
     @required this.itemBuilder,
     @required this.onReorder,
-    @required this.onItemSelected,
+    this.onItemSelected,
     Key key,
   })  : assert(numItems >= 1, "You need at least one item"),
         super(key: key);
@@ -45,35 +45,35 @@ class ReorderableCarousel extends StatefulWidget {
 class _ReorderableCarouselState extends State<ReorderableCarousel> {
   bool _dragInProgress = false;
 
-  double boxSize;
+  double _boxSize;
 
   // includes padding around icon button
-  final double iconSize = 24 + 16.0;
+  final double _iconSize = 24 + 16.0;
 
   ScrollController _controller;
-  int selectedIdx;
+  int _selectedIdx;
 
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
-    selectedIdx = 0;
+    _selectedIdx = 0;
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        boxSize = constraints.maxWidth / 3;
+        _boxSize = constraints.maxWidth / 3;
 
         var children = [
           SizedBox(
-            width: boxSize,
+            width: _boxSize,
           ),
           for (int i = 0; i < widget.numItems; i++)
-            widget.itemBuilder(boxSize, i, i == selectedIdx),
+            widget.itemBuilder(_boxSize, i, i == _selectedIdx),
           SizedBox(
-            width: boxSize - iconSize,
+            width: _boxSize - _iconSize,
           ),
         ];
 
@@ -81,7 +81,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
           // We want all the pages to be cached. This also
           // alleviates a problem where scrolling would get broken if
           // a page changed a position by more than ~4.
-          cacheExtent: (boxSize + iconSize) * widget.numItems,
+          cacheExtent: (_boxSize + _iconSize) * widget.numItems,
           controller: _controller,
           scrollDirection: Axis.horizontal,
           onReorder: (oldIndex, newIndex) {
@@ -167,7 +167,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                 child: Material(
                   elevation: 4,
                   child: widget.itemBuilder(
-                    boxSize,
+                    _boxSize,
                     index - 1,
                     true,
                   ),
@@ -201,21 +201,21 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
       );
     } else {
       return SizedBox(
-        width: iconSize,
+        width: _iconSize,
       );
     }
   }
 
   void _updateSelectedIndex(int index) {
-    widget.onItemSelected(index);
+    widget.onItemSelected?.call(index);
     setState(() {
-      selectedIdx = index;
+      _selectedIdx = index;
     });
   }
 
   void _scrollToBox(int index) {
     _controller.animateTo(
-        (((index) * (boxSize + iconSize)) + boxSize + iconSize),
+        (((index) * (_boxSize + _iconSize)) + _boxSize + _iconSize),
         duration: Duration(milliseconds: 350),
         curve: Curves.linear);
   }

@@ -55,9 +55,6 @@ void main() {
                   width: itemWidth,
                 );
               },
-              onItemSelected: (int idx) {
-                // selectedIndex = idx;
-              },
               onReorder: (int oldIdx, int newIdx) {
                 oldIndex = oldIdx;
                 newIndex = newIdx;
@@ -107,7 +104,6 @@ void main() {
                   width: itemWidth,
                 );
               },
-              onItemSelected: (int idx) {},
               onReorder: (int oldIdx, int newIdx) {},
             ),
           ),
