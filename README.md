@@ -1,6 +1,6 @@
 # reorderable_carousel
 
-<!-- [![pub package](https://img.shields.io/pub/v/expandable_sliver_list.svg)](https://pub.dev/packages/expandable_sliver_list) -->
+[![pub package](https://img.shields.io/pub/v/reorderable_carousel.svg)](https://pub.dev/packages/reorderable_carousel)
 [![flutter_tests](https://github.com/TNorbury/reorderable_carousel/workflows/flutter%20tests/badge.svg)](https://github.com/TNorbury/reorderable_carousel/actions?query=workflow%3A%22flutter+tests%22)
 [![codecov](https://codecov.io/gh/TNorbury/reorderable_carousel/branch/main/graph/badge.svg)](https://codecov.io/gh/TNorbury/reorderable_carousel)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart)
@@ -21,10 +21,11 @@ dependencies:
     reorderable_carousel: ^0.1.0
 ```
 
-
 ### Usage example
-Now you can put the carousel anywhere you want. 
+
+Now you can put the carousel anywhere you want.
 One thing to note: You need to have at least one item at all times
+
 ```dart
 import 'package:reorderable_carousel/reorderable_carousel.dart';
 
