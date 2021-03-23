@@ -1,8 +1,9 @@
 name: reorderable_carousel
 description: A new Flutter package project.
 version: 0.1.0
-author:
-homepage:
+homepage: https://github.com/TNorbury/reorderable_carousel
+repository: https://github.com/TNorbury/reorderable_carousel
+issue_tracker: https://github.com/TNorbury/reorderable_carousel/issues
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
