@@ -35,7 +35,8 @@ class ReorderableCarousel extends StatefulWidget {
     @required this.onReorder,
     @required this.onItemSelected,
     Key key,
-  }) : super(key: key);
+  })  : assert(numItems >= 1, "You need at least one item"),
+        super(key: key);
 
   @override
   _ReorderableCarouselState createState() => _ReorderableCarouselState();
