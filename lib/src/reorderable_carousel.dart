@@ -45,6 +45,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   bool _dragInProgress = false;
 
   double boxSize;
+
+  // includes padding around icon button
   final double iconSize = 24 + 16.0;
 
   ScrollController _controller;
@@ -68,15 +70,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
             width: boxSize,
           ),
           for (int i = 0; i < widget.numItems; i++)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _updateSelectedIndex(i);
-                });
-                _scrollToBox(i - 1);
-              },
-              child: widget.itemBuilder(boxSize, i, i == selectedIdx),
-            ),
+            widget.itemBuilder(boxSize, i, i == selectedIdx),
           SizedBox(
             width: boxSize - iconSize,
           ),
@@ -121,6 +115,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                 Listener(
                   behavior: HitTestBehavior.opaque,
                   onPointerDown: (event) {
+                    _updateSelectedIndex(i - 1);
                     final list = SliverReorderableList.maybeOf(context);
 
                     list?.startItemDragReorder(
@@ -134,7 +129,6 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                         // the wait time has passed and the drag has
                         // started
                         setState(() {
-                          _updateSelectedIndex(i - 1);
                           _dragInProgress = true;
                         });
                         return;
