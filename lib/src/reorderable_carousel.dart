@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +29,14 @@ class ReorderableCarousel extends StatefulWidget {
   /// Called whenever a new item is selected.
   final void Function(int selectedIndex) onItemSelected;
 
+  /// The fraction of the available width of the screen that the item will take
+  /// up.
+  /// The item's width will be calculated like so (a [LayoutBuilder] is used):
+  /// constraints.maxWidth / [itemWidthFraction]
+  ///
+  /// Must be >= 1.0
+  final double itemWidthFraction;
+
   /// Creates a new [ReorderableCarousel]
   ReorderableCarousel({
     @required this.numItems,
@@ -34,8 +44,10 @@ class ReorderableCarousel extends StatefulWidget {
     @required this.itemBuilder,
     @required this.onReorder,
     this.onItemSelected,
+    this.itemWidthFraction = 3,
     Key key,
   })  : assert(numItems >= 1, "You need at least one item"),
+        assert(itemWidthFraction >= 1),
         super(key: key);
 
   @override
@@ -45,11 +57,12 @@ class ReorderableCarousel extends StatefulWidget {
 class _ReorderableCarouselState extends State<ReorderableCarousel> {
   bool _dragInProgress = false;
 
-  double _boxSize;
+  double _itemMaxWidth;
+  double _startingOffset = 0;
+  double _endingOffset = 0;
 
   // includes padding around icon button
   final double _iconSize = 24 + 16.0;
-
   ScrollController _controller;
   int _selectedIdx;
 
@@ -64,21 +77,33 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        _boxSize = constraints.maxWidth / 3;
+        double width = constraints.maxWidth / widget.itemWidthFraction;
+        if (width != _itemMaxWidth) {
+          _itemMaxWidth = width;
+          _startingOffset = (constraints.maxWidth / 2) - (_itemMaxWidth / 2);
+          _endingOffset = max(0, _startingOffset - _iconSize);
+
+          // whenever the size of this widget changes, we'll rescroll to center
+          // the selected item.
+          _scrollToBox(_selectedIdx);
+        }
 
         var children = [
           SizedBox(
-            width: _boxSize,
+            width: _startingOffset,
           ),
           for (int i = 0; i < widget.numItems; i++)
             GestureDetector(
               onTap: () {
                 _scrollToBox(i);
               },
-                child: widget.itemBuilder(_boxSize, i, i == _selectedIdx),
+              child: ConstrainedBox(
+                constraints: BoxConstraints.tightFor(width: _itemMaxWidth),
+                child: widget.itemBuilder(_itemMaxWidth, i, i == _selectedIdx),
+              ),
             ),
           SizedBox(
-            width: _boxSize - _iconSize,
+            width: _endingOffset,
           ),
         ];
 
@@ -86,7 +111,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
           // We want all the pages to be cached. This also
           // alleviates a problem where scrolling would get broken if
           // a page changed a position by more than ~4.
-          cacheExtent: (_boxSize + _iconSize) * widget.numItems,
+          cacheExtent: (_itemMaxWidth + _iconSize) * widget.numItems,
           controller: _controller,
           scrollDirection: Axis.horizontal,
           onReorder: (oldIndex, newIndex) {
@@ -110,7 +135,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
 
               _updateSelectedIndex(newIndex);
 
-              _scrollToBox(newIndex - 1);
+              _scrollToBox(newIndex);
             });
           },
           itemCount: children.length,
@@ -173,7 +198,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                 child: Material(
                   elevation: 4,
                   child: widget.itemBuilder(
-                    _boxSize,
+                    _itemMaxWidth,
                     index - 1,
                     true,
                   ),
@@ -200,7 +225,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
             setState(() {
               _updateSelectedIndex(index);
 
-              _scrollToBox(index - 1);
+              _scrollToBox(index);
             });
           },
         ),
@@ -221,10 +246,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
 
   void _scrollToBox(int index) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.animateTo(
-          (((index) * (_boxSize + _iconSize)) + _boxSize + _iconSize),
-          duration: Duration(milliseconds: 350),
-          curve: Curves.linear);
+      _controller.animateTo(((_itemMaxWidth + _iconSize) * index),
+          duration: Duration(milliseconds: 350), curve: Curves.linear);
     });
   }
 }

@@ -32,7 +32,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(Key("Item 0")));
-      await tester.pumpAndSettle(Duration(seconds: 1));
+      await tester.pumpAndSettle(Duration(seconds: 20));
       expect(selectedIndex, 0);
     },
   );
