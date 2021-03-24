@@ -18,7 +18,7 @@ In your Flutter project, add the package to your dependencies
 
 ```yml
 dependencies:
-    reorderable_carousel: ^0.1.0
+    reorderable_carousel: ^0.1.1
 ```
 
 ### Usage example
