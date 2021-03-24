@@ -22,12 +22,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  List<Color> colors;
+  late List<Color> colors;
 
-  Color selectedColor;
-  int selectedIdx;
+  late Color selectedColor;
+  late int selectedIdx;
 
-  double boxSize;
   final double iconSize = 24 + 16.0;
 
   @override

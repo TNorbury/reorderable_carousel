@@ -7,7 +7,7 @@ void main() {
   testWidgets(
     "Tap on item",
     (WidgetTester tester) async {
-      int selectedIndex;
+      int? selectedIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -40,8 +40,8 @@ void main() {
   testWidgets(
     "Drag test",
     (WidgetTester tester) async {
-      int oldIndex;
-      int newIndex;
+      int? oldIndex;
+      int? newIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -88,7 +88,7 @@ void main() {
   testWidgets(
     "Add item callback",
     (WidgetTester tester) async {
-      int newIndex;
+      int? newIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(

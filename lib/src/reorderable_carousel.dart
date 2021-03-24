@@ -27,7 +27,7 @@ class ReorderableCarousel extends StatefulWidget {
   final void Function(int oldIndex, int newIndex) onReorder;
 
   /// Called whenever a new item is selected.
-  final void Function(int selectedIndex) onItemSelected;
+  final void Function(int selectedIndex)? onItemSelected;
 
   /// The fraction of the available width of the screen that the item will take
   /// up.
@@ -39,13 +39,13 @@ class ReorderableCarousel extends StatefulWidget {
 
   /// Creates a new [ReorderableCarousel]
   ReorderableCarousel({
-    @required this.numItems,
-    @required this.addItemAt,
-    @required this.itemBuilder,
-    @required this.onReorder,
+    required this.numItems,
+    required this.addItemAt,
+    required this.itemBuilder,
+    required this.onReorder,
     this.onItemSelected,
     this.itemWidthFraction = 3,
-    Key key,
+    Key? key,
   })  : assert(numItems >= 1, "You need at least one item"),
         assert(itemWidthFraction >= 1),
         super(key: key);
@@ -57,20 +57,25 @@ class ReorderableCarousel extends StatefulWidget {
 class _ReorderableCarouselState extends State<ReorderableCarousel> {
   bool _dragInProgress = false;
 
-  double _itemMaxWidth;
+  double _itemMaxWidth = -1;
   double _startingOffset = 0;
   double _endingOffset = 0;
 
   // includes padding around icon button
   final double _iconSize = 24 + 16.0;
-  ScrollController _controller;
-  int _selectedIdx;
+  late ScrollController _controller;
+  int _selectedIdx = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
-    _selectedIdx = 0;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -182,7 +187,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
           },
           proxyDecorator: (child, index, animation) {
             // move and scale the dragged item
-            var align = AlignmentGeometryTween(
+            var align = AlignmentTween(
               begin: Alignment.centerLeft,
               end: Alignment.center,
             ).animate(animation);
@@ -245,7 +250,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   }
 
   void _scrollToBox(int index) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       _controller.animateTo(((_itemMaxWidth + _iconSize) * index),
           duration: Duration(milliseconds: 350), curve: Curves.linear);
     });
@@ -259,8 +264,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
 class _PointerSmuggler extends DelayedMultiDragGestureRecognizer {
   _PointerSmuggler(
       {Duration delay = kLongPressTimeout,
-      Object debugOwner,
-      PointerDeviceKind kind})
+      Object? debugOwner,
+      PointerDeviceKind? kind})
       : super(debugOwner: debugOwner, delay: delay, kind: kind);
 
   @override
