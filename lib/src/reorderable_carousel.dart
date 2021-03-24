@@ -71,7 +71,12 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
             width: _boxSize,
           ),
           for (int i = 0; i < widget.numItems; i++)
-            widget.itemBuilder(_boxSize, i, i == _selectedIdx),
+            GestureDetector(
+              onTap: () {
+                _scrollToBox(i);
+              },
+                child: widget.itemBuilder(_boxSize, i, i == _selectedIdx),
+            ),
           SizedBox(
             width: _boxSize - _iconSize,
           ),
@@ -117,7 +122,6 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                   behavior: HitTestBehavior.opaque,
                   onPointerDown: (event) {
                     _updateSelectedIndex(i - 1);
-                    _scrollToBox(i - 2);
 
                     final list = SliverReorderableList.maybeOf(context);
 
