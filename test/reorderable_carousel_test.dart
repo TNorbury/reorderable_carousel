@@ -109,8 +109,10 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byType(IconButton).first);
+      await tester.pumpAndSettle();
 
       expect(newIndex, 1);
     },

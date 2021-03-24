@@ -117,6 +117,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
                   behavior: HitTestBehavior.opaque,
                   onPointerDown: (event) {
                     _updateSelectedIndex(i - 1);
+                    _scrollToBox(i - 2);
+
                     final list = SliverReorderableList.maybeOf(context);
 
                     list?.startItemDragReorder(
@@ -214,10 +216,12 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   }
 
   void _scrollToBox(int index) {
-    _controller.animateTo(
-        (((index) * (_boxSize + _iconSize)) + _boxSize + _iconSize),
-        duration: Duration(milliseconds: 350),
-        curve: Curves.linear);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.animateTo(
+          (((index) * (_boxSize + _iconSize)) + _boxSize + _iconSize),
+          duration: Duration(milliseconds: 350),
+          curve: Curves.linear);
+    });
   }
 }
 
