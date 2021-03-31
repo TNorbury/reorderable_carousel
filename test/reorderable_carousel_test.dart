@@ -7,7 +7,7 @@ void main() {
   testWidgets(
     "Tap on item",
     (WidgetTester tester) async {
-      int selectedIndex;
+      int? selectedIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -40,8 +40,8 @@ void main() {
   testWidgets(
     "Drag test",
     (WidgetTester tester) async {
-      int oldIndex;
-      int newIndex;
+      int? oldIndex;
+      int? newIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -88,7 +88,7 @@ void main() {
   testWidgets(
     "Add item callback",
     (WidgetTester tester) async {
-      int newIndex;
+      int? newIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
@@ -115,6 +115,45 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(newIndex, 1);
+    },
+  );
+
+  testWidgets(
+    "Add item awaits",
+    (WidgetTester tester) async {
+      bool? addItemCalled;
+      bool? itemSelectedCalled;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: ReorderableCarousel(
+              numItems: 1,
+              addItemAt: (int index) async {
+                await Future.delayed(Duration(seconds: 1));
+                addItemCalled = true;
+              },
+              itemBuilder: (double itemWidth, int index, bool isSelected) {
+                return Container(
+                  key: Key("Item $index"),
+                  height: 100,
+                  width: itemWidth,
+                );
+              },
+              onReorder: (int oldIdx, int newIdx) {},
+              onItemSelected: (_) {
+                expect(addItemCalled, true);
+                itemSelectedCalled = true;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(IconButton).first);
+      await tester.pumpAndSettle(const Duration(seconds: 20));
+
+      expect(itemSelectedCalled, true);
     },
   );
 }
