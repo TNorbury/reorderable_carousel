@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -10,7 +11,7 @@ class ReorderableCarousel extends StatefulWidget {
 
   /// Callback for when the user presses the "+" button. The given index
   /// indicates where the new item should be inserted at.
-  final void Function(int index) addItemAt;
+  final FutureOr<void> Function(int index) addItemAt;
 
   /// Builder for creating the items of the carousel.
   /// [itemWidth] indicates the maximum amount of width alloted for the item
@@ -225,8 +226,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
         child: IconButton(
           visualDensity: VisualDensity.compact,
           icon: Icon(Icons.add),
-          onPressed: () {
-            widget.addItemAt(index);
+          onPressed: () async {
+            await widget.addItemAt(index);
             setState(() {
               _updateSelectedIndex(index);
 
