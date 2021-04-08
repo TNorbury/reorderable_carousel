@@ -156,4 +156,72 @@ void main() {
       expect(itemSelectedCalled, true);
     },
   );
+
+  testWidgets(
+    "selected item isn't updated if add item returns null",
+    (WidgetTester tester) async {
+      bool? itemSelectedCalled = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: ReorderableCarousel(
+              numItems: 1,
+              addItemAt: (int index) async {
+                await Future.delayed(Duration(seconds: 1));
+                return false;
+              },
+              itemBuilder: (double itemWidth, int index, bool isSelected) {
+                return Container(
+                  key: Key("Item $index"),
+                  height: 100,
+                  width: itemWidth,
+                );
+              },
+              onReorder: (int oldIdx, int newIdx) {},
+              onItemSelected: (_) {
+                itemSelectedCalled = true;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(IconButton).first);
+      await tester.pumpAndSettle(const Duration(seconds: 20));
+
+      expect(itemSelectedCalled, false);
+    },
+  );
+
+  testWidgets(
+    "Add icon isn't visible if max number of items is reach",
+    (WidgetTester tester) async {
+      int? newIndex;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: ReorderableCarousel(
+              maxNumberItems: 5,
+              numItems: 5,
+              addItemAt: (int index) {
+                newIndex = index;
+              },
+              itemBuilder: (double itemWidth, int index, bool isSelected) {
+                return Container(
+                  key: Key("Item $index"),
+                  height: 100,
+                  width: itemWidth,
+                );
+              },
+              onReorder: (int oldIdx, int newIdx) {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(IconButton), findsNothing);
+    },
+  );
 }

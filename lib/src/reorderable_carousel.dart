@@ -11,7 +11,15 @@ class ReorderableCarousel extends StatefulWidget {
 
   /// Callback for when the user presses the "+" button. The given index
   /// indicates where the new item should be inserted at.
-  final FutureOr<void> Function(int index) addItemAt;
+  ///
+  /// Returning either `true` or null indicates that a new item was added to
+  /// your collection of items, and that the added item should be selected,
+  /// which in turn calls [onItemSelected] (if defined) and scrolls to the that
+  /// item.
+  ///
+  /// Returning `false` means that you didn't end up adding the item, and thus
+  /// the selected item shouldn't be updated.
+  final FutureOr<bool?> Function(int index) addItemAt;
 
   /// Builder for creating the items of the carousel.
   /// [itemWidth] indicates the maximum amount of width alloted for the item
@@ -38,6 +46,10 @@ class ReorderableCarousel extends StatefulWidget {
   /// Must be >= 1.0
   final double itemWidthFraction;
 
+  /// The maximum number of items allowed in the carousel. If not set the `+`
+  /// icons will never disappear.
+  final int? maxNumberItems;
+
   /// Creates a new [ReorderableCarousel]
   ReorderableCarousel({
     required this.numItems,
@@ -46,6 +58,7 @@ class ReorderableCarousel extends StatefulWidget {
     required this.onReorder,
     this.onItemSelected,
     this.itemWidthFraction = 3,
+    this.maxNumberItems,
     Key? key,
   })  : assert(numItems >= 1, "You need at least one item"),
         assert(itemWidthFraction >= 1),
@@ -218,8 +231,10 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   }
 
   Widget _buildAddItemIcon(int index) {
-    // once we have 10 items, don't allow anymore items to be built
-    if (widget.numItems < 10) {
+    // once we have maxNumberItems items, don't allow anymore items to be built
+    if ((widget.maxNumberItems != null &&
+            widget.numItems < widget.maxNumberItems!) ||
+        widget.maxNumberItems == null) {
       return AnimatedOpacity(
         opacity: _dragInProgress ? 0.0 : 1.0,
         duration: const Duration(milliseconds: 250),
@@ -227,12 +242,17 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
           visualDensity: VisualDensity.compact,
           icon: Icon(Icons.add),
           onPressed: () async {
-            await widget.addItemAt(index);
-            setState(() {
-              _updateSelectedIndex(index);
+            bool? itemAdded = await widget.addItemAt(index);
 
-              _scrollToBox(index);
-            });
+            // if an item was added, or the callback didn't specify, then update
+            // the selected index.
+            if (itemAdded == null || itemAdded) {
+              setState(() {
+                _updateSelectedIndex(index);
+
+                _scrollToBox(index);
+              });
+            }
           },
         ),
       );

@@ -59,6 +59,7 @@ class MyHomePageState extends State<MyHomePage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ReorderableCarousel(
+                maxNumberItems: 10,
                 numItems: colors.length,
                 addItemAt: (index) {
                   setState(() {
