@@ -28,8 +28,14 @@ class ReorderableCarousel extends StatefulWidget {
   ///
   /// [isSelected] whether or not the item is selected. This will be true if the
   ///   item has been tapped on, or if it's currently being dragged
+  /// 
+  /// Will be called to builded the dragged item if [draggedItemBuilder] isn't
+  /// defined
   final Widget Function(double itemWidth, int index, bool isSelected)
       itemBuilder;
+
+  /// Builder that's called when the item at [index] is being dragged.
+  final Widget Function(double itemWidth, int index)? draggedItemBuilder;
 
   /// Called after the items have been reordered. Both [oldIndex] and [newIndex]
   /// will be > 0 and < numItems
@@ -59,6 +65,7 @@ class ReorderableCarousel extends StatefulWidget {
     this.onItemSelected,
     this.itemWidthFraction = 3,
     this.maxNumberItems,
+    this.draggedItemBuilder,
     Key? key,
   })  : assert(numItems >= 1, "You need at least one item"),
         assert(itemWidthFraction >= 1),
@@ -210,17 +217,30 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
               end: 1.1,
             ).animate(animation);
 
+            Widget item;
+
+            // If there is a builder for dragged items, use it. Otherwise just
+            // use the regular item builder.
+            if (widget.draggedItemBuilder != null) {
+              item = widget.draggedItemBuilder!(
+                _itemMaxWidth,
+                index - 1,
+              );
+            } else {
+              item = widget.itemBuilder(
+                _itemMaxWidth,
+                index - 1,
+                true,
+              );
+            }
+
             return AlignTransition(
               alignment: align,
               child: ScaleTransition(
                 scale: size,
                 child: Material(
                   elevation: 4,
-                  child: widget.itemBuilder(
-                    _itemMaxWidth,
-                    index - 1,
-                    true,
-                  ),
+                  child: item,
                 ),
               ),
             );

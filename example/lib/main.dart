@@ -70,17 +70,27 @@ class MyHomePageState extends State<MyHomePage> {
                   });
                 },
                 itemBuilder: (boxSize, index, isSelected) {
-                  return AnimatedContainer(
-                    key: ValueKey(colors[index]),
-                    duration: const Duration(milliseconds: 250),
-                    height: 150,
-                    width: boxSize,
-                    decoration: BoxDecoration(
-                      border: isSelected
-                          ? Border.all(color: Colors.amber, width: 10.0)
-                          : null,
-                      color: colors[index],
-                    ),
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AnimatedContainer(
+                            key: ValueKey(colors[index]),
+                            duration: const Duration(milliseconds: 250),
+                            height: 150,
+                            width: boxSize,
+                            decoration: BoxDecoration(
+                              border: isSelected
+                                  ? Border.all(color: Colors.amber, width: 10.0)
+                                  : null,
+                              color: colors[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.ac_unit),
+                    ],
                   );
                 },
                 onReorder: (oldIndex, newIndex) {
@@ -93,6 +103,18 @@ class MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     selectedColor = colors[selectedIndex];
                   });
+                },
+                draggedItemBuilder: (itemWidth, index) {
+                  return AnimatedContainer(
+                    key: ValueKey(colors[index]),
+                    duration: const Duration(milliseconds: 250),
+                    height: 150,
+                    width: itemWidth,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.amber, width: 10.0),
+                      color: colors[index],
+                    ),
+                  );
                 },
               ),
             ),

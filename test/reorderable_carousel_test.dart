@@ -197,16 +197,13 @@ void main() {
   testWidgets(
     "Add icon isn't visible if max number of items is reach",
     (WidgetTester tester) async {
-      int? newIndex;
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
             child: ReorderableCarousel(
               maxNumberItems: 5,
               numItems: 5,
-              addItemAt: (int index) {
-                newIndex = index;
-              },
+              addItemAt: (int index) {},
               itemBuilder: (double itemWidth, int index, bool isSelected) {
                 return Container(
                   key: Key("Item $index"),
@@ -222,6 +219,54 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(IconButton), findsNothing);
+    },
+  );
+
+  testWidgets(
+    "Different builder used when dragging",
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: ReorderableCarousel(
+              numItems: 2,
+              addItemAt: (int index) {},
+              itemBuilder: (double itemWidth, int index, bool isSelected) {
+                return Container(
+                  key: Key("Item $index"),
+                  height: 100,
+                  width: itemWidth,
+                );
+              },
+              onReorder: (int oldIdx, int newIdx) {},
+              draggedItemBuilder: (itemWidth, index) {
+                return Container(
+                  width: itemWidth,
+                  height: 50,
+                  child: Text("Dragging $index"),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Offset dragStart = tester.getCenter(find.byKey(Key("Item 0")));
+
+      final gesture = await tester.startGesture(
+        dragStart,
+        pointer: 7,
+      );
+      await tester.pump(const Duration(seconds: 20));
+
+      // find the dragged widget
+      expect(find.text("Dragging 0"), findsOneWidget);
+      await gesture.up();
+      await tester.pump();
+
+      // widget should be gone after pointer up
+      expect(find.text("Dragging 0"), findsNothing);
     },
   );
 }
