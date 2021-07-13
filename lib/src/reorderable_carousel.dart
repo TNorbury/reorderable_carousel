@@ -28,7 +28,7 @@ class ReorderableCarousel extends StatefulWidget {
   ///
   /// [isSelected] whether or not the item is selected. This will be true if the
   ///   item has been tapped on, or if it's currently being dragged
-  /// 
+  ///
   /// Will be called to builded the dragged item if [draggedItemBuilder] isn't
   /// defined
   final Widget Function(double itemWidth, int index, bool isSelected)
@@ -56,6 +56,12 @@ class ReorderableCarousel extends StatefulWidget {
   /// icons will never disappear.
   final int? maxNumberItems;
 
+  /// The duration for scrolling to the next selected item.
+  final Duration scrollToDuration;
+
+  /// Animation Curve used for scrolling to the next selected item.
+  final Curve scrollToCurve;
+
   /// Creates a new [ReorderableCarousel]
   ReorderableCarousel({
     required this.numItems,
@@ -66,6 +72,8 @@ class ReorderableCarousel extends StatefulWidget {
     this.itemWidthFraction = 3,
     this.maxNumberItems,
     this.draggedItemBuilder,
+    this.scrollToDuration = const Duration(milliseconds: 350),
+    this.scrollToCurve = Curves.linear,
     Key? key,
   })  : assert(numItems >= 1, "You need at least one item"),
         assert(itemWidthFraction >= 1),
@@ -293,7 +301,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   void _scrollToBox(int index) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _controller.animateTo(((_itemMaxWidth + _iconSize) * index),
-          duration: Duration(milliseconds: 350), curve: Curves.linear);
+          duration: widget.scrollToDuration, curve: widget.scrollToCurve);
     });
   }
 }
