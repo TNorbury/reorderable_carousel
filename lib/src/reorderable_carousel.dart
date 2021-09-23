@@ -47,7 +47,7 @@ class ReorderableCarousel extends StatefulWidget {
   /// The fraction of the available width of the screen that the item will take
   /// up.
   /// The item's width will be calculated like so (a [LayoutBuilder] is used):
-  /// constraints.maxWidth / [itemWidthFraction]
+  /// `constraints.maxWidth / [itemWidthFraction]`
   ///
   /// Must be >= 1.0
   final double itemWidthFraction;
@@ -94,6 +94,8 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   final double _iconSize = 24 + 16.0;
   late ScrollController _controller;
   int _selectedIdx = 0;
+
+  final double _padding = 8.0;
 
   @override
   void initState() {
@@ -311,11 +313,10 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
 /// recognizer starts, but doesn't event up actually doing anything with the
 /// event (seeing as it's handled by the other gesture recognizer)
 class _PointerSmuggler extends DelayedMultiDragGestureRecognizer {
-  _PointerSmuggler(
-      {Duration delay = kLongPressTimeout,
-      Object? debugOwner,
-      PointerDeviceKind? kind})
-      : super(debugOwner: debugOwner, delay: delay, kind: kind);
+  _PointerSmuggler({
+    Duration delay = kLongPressTimeout,
+    Object? debugOwner,
+  }) : super(debugOwner: debugOwner, delay: delay);
 
   @override
   void rejectGesture(int pointer) {

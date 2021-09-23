@@ -1,6 +1,6 @@
 name: reorderable_carousel
 description: A carousel in that allows one to reorder the contents of it via drag and drop 
-version: 0.3.2
+version: 0.3.2+1
 homepage: https://github.com/TNorbury/reorderable_carousel
 repository: https://github.com/TNorbury/reorderable_carousel
 issue_tracker: https://github.com/TNorbury/reorderable_carousel/issues
