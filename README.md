@@ -3,7 +3,7 @@
 [![pub package](https://img.shields.io/pub/v/reorderable_carousel.svg)](https://pub.dev/packages/reorderable_carousel)
 [![flutter_tests](https://github.com/TNorbury/reorderable_carousel/workflows/flutter%20tests/badge.svg)](https://github.com/TNorbury/reorderable_carousel/actions?query=workflow%3A%22flutter+tests%22)
 [![codecov](https://codecov.io/gh/TNorbury/reorderable_carousel/branch/main/graph/badge.svg)](https://codecov.io/gh/TNorbury/reorderable_carousel)
-[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart)
+[![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/effective_dart)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A carousel which allows you to reorder the contents within the carousel, as well as add or remove items from it.
@@ -18,7 +18,7 @@ In your Flutter project, add the package to your dependencies
 
 ```yml
 dependencies:
-    reorderable_carousel: ^0.4.0
+    reorderable_carousel: ^0.3.2
 ```
 
 ### Usage example

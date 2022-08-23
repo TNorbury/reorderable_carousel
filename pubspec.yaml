@@ -1,20 +1,21 @@
 name: reorderable_carousel
 description: A carousel in that allows one to reorder the contents of it via drag and drop 
-version: 0.4.0
+version: 0.3.2+1
 homepage: https://github.com/TNorbury/reorderable_carousel
 repository: https://github.com/TNorbury/reorderable_carousel
 issue_tracker: https://github.com/TNorbury/reorderable_carousel/issues
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
+  flutter_lints:  ^2.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints:  ^2.0.0
 
 flutter:

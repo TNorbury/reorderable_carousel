@@ -45,3 +45,6 @@ android*
 *ios*
 *windows*
 *web*
+*macos*
+*linux*
+analysis_options.yaml
