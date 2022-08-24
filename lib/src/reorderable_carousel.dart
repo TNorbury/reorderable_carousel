@@ -63,7 +63,7 @@ class ReorderableCarousel extends StatefulWidget {
   final Curve scrollToCurve;
 
   /// Creates a new [ReorderableCarousel]
-  ReorderableCarousel({
+  const ReorderableCarousel({
     required this.numItems,
     required this.addItemAt,
     required this.itemBuilder,
@@ -270,7 +270,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
         duration: const Duration(milliseconds: 250),
         child: IconButton(
           visualDensity: VisualDensity.compact,
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () async {
             bool? itemAdded = await widget.addItemAt(index);
 
@@ -301,7 +301,7 @@ class _ReorderableCarouselState extends State<ReorderableCarousel> {
   }
 
   void _scrollToBox(int index) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.animateTo(((_itemMaxWidth + _iconSize) * index),
           duration: widget.scrollToDuration, curve: widget.scrollToCurve);
     });

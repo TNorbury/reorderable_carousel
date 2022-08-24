@@ -4,7 +4,7 @@ import 'package:reorderable_carousel/reorderable_carousel.dart';
 
 void main() {
   testWidgets(
-    "Tap on item",
+    'Tap on item',
     (WidgetTester tester) async {
       int? selectedIndex;
       await tester.pumpWidget(
@@ -12,10 +12,12 @@ void main() {
           home: Material(
             child: ReorderableCarousel(
               numItems: 1,
-              addItemAt: (int index) {},
+              addItemAt: (int index) {
+                return null;
+              },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -30,14 +32,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(Key("Item 0")));
-      await tester.pumpAndSettle(Duration(seconds: 20));
+      await tester.tap(find.byKey(const Key('Item 0')));
+      await tester.pumpAndSettle(const Duration(seconds: 20));
       expect(selectedIndex, 0);
     },
   );
 
   testWidgets(
-    "Drag test",
+    'Drag test',
     (WidgetTester tester) async {
       int? oldIndex;
       int? newIndex;
@@ -46,10 +48,12 @@ void main() {
           home: Material(
             child: ReorderableCarousel(
               numItems: 2,
-              addItemAt: (int index) {},
+              addItemAt: (int index) {
+                return null;
+              },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -64,10 +68,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      Offset dragStart = tester.getCenter(find.byKey(Key("Item 0")));
+      Offset dragStart = tester.getCenter(find.byKey(const Key('Item 0')));
       Offset dragEnd = Offset(
-          tester.getBottomRight(find.byKey(Key("Item 1"))).dx + 50,
-          tester.getBottomRight(find.byKey(Key("Item 1"))).dy);
+          tester.getBottomRight(find.byKey(const Key('Item 1'))).dx + 50,
+          tester.getBottomRight(find.byKey(const Key('Item 1'))).dy);
 
       final gesture = await tester.startGesture(
         dragStart,
@@ -85,7 +89,7 @@ void main() {
   );
 
   testWidgets(
-    "Add item callback",
+    'Add item callback',
     (WidgetTester tester) async {
       int? newIndex;
       await tester.pumpWidget(
@@ -95,10 +99,11 @@ void main() {
               numItems: 1,
               addItemAt: (int index) {
                 newIndex = index;
+                return null;
               },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -118,7 +123,7 @@ void main() {
   );
 
   testWidgets(
-    "Add item awaits",
+    'Add item awaits',
     (WidgetTester tester) async {
       bool? addItemCalled;
       bool? itemSelectedCalled;
@@ -128,12 +133,13 @@ void main() {
             child: ReorderableCarousel(
               numItems: 1,
               addItemAt: (int index) async {
-                await Future.delayed(Duration(seconds: 1));
+                await Future.delayed(const Duration(seconds: 1));
                 addItemCalled = true;
+                return null;
               },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -157,7 +163,7 @@ void main() {
   );
 
   testWidgets(
-    "selected item isn't updated if add item returns null",
+    'selected item isn\'t updated if add item returns null',
     (WidgetTester tester) async {
       bool? itemSelectedCalled = false;
       await tester.pumpWidget(
@@ -166,12 +172,12 @@ void main() {
             child: ReorderableCarousel(
               numItems: 1,
               addItemAt: (int index) async {
-                await Future.delayed(Duration(seconds: 1));
+                await Future.delayed(const Duration(seconds: 1));
                 return false;
               },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -194,7 +200,7 @@ void main() {
   );
 
   testWidgets(
-    "Add icon isn't visible if max number of items is reach",
+    'Add icon isn\'t visible if max number of items is reach',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -202,10 +208,12 @@ void main() {
             child: ReorderableCarousel(
               maxNumberItems: 5,
               numItems: 5,
-              addItemAt: (int index) {},
+              addItemAt: (int index) {
+                return null;
+              },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
@@ -222,27 +230,29 @@ void main() {
   );
 
   testWidgets(
-    "Different builder used when dragging",
+    'Different builder used when dragging',
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Material(
             child: ReorderableCarousel(
               numItems: 2,
-              addItemAt: (int index) {},
+              addItemAt: (int index) {
+                return null;
+              },
               itemBuilder: (double itemWidth, int index, bool isSelected) {
-                return Container(
-                  key: Key("Item $index"),
+                return SizedBox(
+                  key: Key('Item $index'),
                   height: 100,
                   width: itemWidth,
                 );
               },
               onReorder: (int oldIdx, int newIdx) {},
               draggedItemBuilder: (itemWidth, index) {
-                return Container(
+                return SizedBox(
                   width: itemWidth,
                   height: 50,
-                  child: Text("Dragging $index"),
+                  child: Text('Dragging $index'),
                 );
               },
             ),
@@ -251,7 +261,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      Offset dragStart = tester.getCenter(find.byKey(Key("Item 0")));
+      Offset dragStart = tester.getCenter(find.byKey(const Key('Item 0')));
 
       final gesture = await tester.startGesture(
         dragStart,
@@ -260,12 +270,12 @@ void main() {
       await tester.pump(const Duration(seconds: 20));
 
       // find the dragged widget
-      expect(find.text("Dragging 0"), findsOneWidget);
+      expect(find.text('Dragging 0'), findsOneWidget);
       await gesture.up();
       await tester.pump();
 
       // widget should be gone after pointer up
-      expect(find.text("Dragging 0"), findsNothing);
+      expect(find.text('Dragging 0'), findsNothing);
     },
   );
 }
