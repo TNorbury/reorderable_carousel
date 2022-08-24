@@ -75,3 +75,4 @@ build/
 
 .vscode
 .fvm/flutter_sdk
+pubspec.lock
